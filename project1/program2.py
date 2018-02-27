@@ -46,9 +46,10 @@ for i in range(H1, H2):
 step = (Lmax - Lmin) / 100
 h = np.zeros((101,), dtype=int)
 f = np.zeros((101,), dtype=int)
+mapping = np.zeros((101,), dtype=int)
 
-for i in range(0, rows):
-    for j in range(0, cols):
+for i in range(H1, H2):
+    for j in range(W1, W2):
         pixel = XYZ2Luv(RGB2XYZ(invGamma(limit(scaleDown(inputImage[i, j])))))
         L, u, v = pixel[0], pixel[1], pixel[2]
         val = 0
@@ -70,27 +71,26 @@ for i in range(101):
     s += h[i]
     f[i] = s
 
-n, k = rows * cols, 101
+n, k = (H2 - H1) * (W2 - W1), 101
+for i in range(101):
+    if i == 0:
+        mapping[i] = k * f[i] / (2 * n)
+    else:
+        mapping[i] = k * (f[i] + f[i - 1]) / (2 * n)
+
+
 for i in range(0, rows):
     for j in range(0, cols):
         pixel = XYZ2Luv(RGB2XYZ(invGamma(limit(scaleDown(inputImage[i, j])))))
         L, u, v = pixel[0], pixel[1], pixel[2]
-        val = 0
+        L_prime = 0
         if L > Lmax:
-            h[100] += 1
-            val = 100
+            L_prime = 100
         elif L < Lmin:
-            h[0] += 1
-            val = 0
+            L_prime = 0
         else:
-            if step > 0:
-                val = int(round((L - Lmin) / step))
-            else:
-                val = int(L)
-        if val == 0:
-            L_prime = k * f[val] / (2 * n)
-        else:
-            L_prime = k * (f[val - 1] + f[val]) / (2 * n) 
+            k = int(round(L))
+            L_prime = mapping[k]
         newPixel = np.array([L_prime, u, v])
         r, g, b = scaleUp(limit(gamma(XYZ2RGB(Luv2XYZ(newPixel)))))
         outputImage[i, j] = b, g, r

@@ -5,8 +5,8 @@ program2.py: second program
 
 how to run:
 $ cd project1/
-$ python program1.py 0.2 0.1 0.8 0.5 input.jpg out.png
-$ python program2.py 0.2 0.1 0.8 0.5 input.jpg out.png
+$ python program1.py 0.2 0.1 0.8 0.5 fruits.jpg out.png
+$ python program2.py 0.2 0.1 0.8 0.5 fruits.jpg out.png
 
 Explanation:
 I made several decisions on my program:
@@ -15,4 +15,4 @@ I made several decisions on my program:
 3. In program2.py: we handle Lmax == Lmin (step == 0) case
 
 Description:
-Normally, the results after applying my picture will be darker than original, which means that the lightness will be decrease. If I choose a very small size of window, the picture may look "bad".
+Normally, the result after applying my picture will be changed only in terms of its light, which means that the color will not be changed. However, If I choose a very small size of window, the picture may look "bad".

@@ -15,11 +15,13 @@ mnist = input_data.read_data_sets('MNIST_data', one_hot=True)
 
 dim_hidden = 1024
 
-layer_cnn1 = tf.layers.Conv2D(32, 5, padding="same", activation = tf.nn.relu)
-layer_pool2x2 = tf.layers.MaxPooling2D(pool_size=[2, 2], strides=2)
+layer_cnn1 = tf.layers.Conv2D(64, 2, padding="same", activation = tf.nn.relu)
+layer_cnn2 = tf.layers.Conv2D(128, 2, padding="same", activation = tf.nn.relu)
+#layer_cnn3 = tf.layers.Conv2D(128, 2, padding="same", activation = tf.nn.relu)
+#layer_cnn4 = tf.layers.Conv2D(256, 2, padding="same", activation = tf.nn.relu)
+layer_pool2x2 = tf.layers.MaxPooling2D(pool_size=[2, 2], strides=1)
 layer_pool3x3 = tf.layers.MaxPooling2D(pool_size=[3, 3], strides=2)
-layer_pool4x4 = tf.layers.MaxPooling2D(pool_size=[4, 4], strides=2)
-layer_cnn2 = tf.layers.Conv2D(128, 2, activation = tf.nn.relu)
+layer_pool4x4 = tf.layers.MaxPooling2D(4, 4)
 layer_flatten = tf.layers.Flatten()
 layer_fc0 = tf.layers.Dense(dim_hidden, activation = tf.nn.relu)
 layer_dropout = tf.layers.Dropout(rate=0.40) # dropout rate is 0.75. Retain 0.25
@@ -31,7 +33,9 @@ def prediction(X, training):
     values = tf.constant(X)
     values = layer_pool4x4(values) # this must be the first layer
     values = layer_cnn1(values)
-    values = layer_pool3x3(values)
+    values = layer_cnn2(values)
+    #values = layer_cnn3(values)
+    values = layer_pool2x2(values)
     values = layer_flatten(values)
     values = layer_fc0(values)
     values = layer_dropout(values, training=training)
@@ -61,8 +65,8 @@ def v_binary_accuracy() :
 
 
 optimizer = tf.train.AdamOptimizer(learning_rate = 1e-3)
-batch_size = 25
-iters = 4000
+batch_size = 50
+iters = 2000
 
 for i in range(iters):
     X, y = mnist.train.next_batch(batch_size)
